@@ -28,9 +28,12 @@ STUDENT_NAME = "Akanksha Kumari"
 ROLL_NO = "2202113"
 DEPARTMENT = "Electrical Engineering"
 INSTITUTE = "National Institute of Technology Patna"
-COMPANY = "Slashmark"
-INTERNSHIP_ROLE = "Software Engineer Intern at Slashmark"
-START_DATE = "12th January 2026"
+COMPANY = "SLASH MARK IT SOLUTIONS (OPC) PVT LTD"
+INTERNSHIP_ROLE = "Machine Learning Engineer Intern"
+DOMAIN = "Machine Learning Internship"
+INTERN_EMAIL = "akankshainfinity1@gmail.com"
+INTERN_ID = "SM82389"
+BATCH_DURATION = "Dec 15, 2025 to April 15, 2026"
 SUPERVISOR = "Slashmark Technical Team"
 
 
@@ -159,27 +162,74 @@ def add_page_number(canvas, doc):
 
 def cover_page():
     story = []
-    story.append(Spacer(1, 0.45 * inch))
-    story.append(p("NATIONAL INSTITUTE OF TECHNOLOGY<br/>PATNA", "CoverTitle"))
-    if LOGO.exists():
-        story.append(Image(str(LOGO), width=1.45 * inch, height=1.45 * inch))
-    story.append(Spacer(1, 0.35 * inch))
-    story.append(p("RESEARCH PROJECT-II", "CoverText"))
-    story.append(Spacer(1, 0.20 * inch))
-    story.append(p(INTERNSHIP_ROLE, "CoverText"))
-    story.append(p(f"Start Date: &nbsp; {START_DATE}", "BodyCenter"))
-    story.append(Spacer(1, 0.35 * inch))
-    story.append(p("Submitted by", "CoverText"))
-    story.append(p(f"Name: {STUDENT_NAME}", "CoverText"))
-    story.append(p(f"Roll No: {ROLL_NO}", "BodyCenter"))
-    story.append(Spacer(1, 0.20 * inch))
-    story.append(p(f"Department: {DEPARTMENT}", "CoverText"))
-    story.append(Spacer(1, 0.42 * inch))
-    story.append(p("Under the supervision of", "CoverText"))
-    story.append(p(SUPERVISOR, "BodyCenter"))
-    story.append(p(f"({COMPANY})", "BodyCenter"))
-    story.append(Spacer(1, 0.25 * inch))
-    story.append(p("SLASHMARK", "CoverText"))
+    story.append(p("SLASH MARK IT SOLUTIONS (OPC) PVT LTD", "CoverText"))
+    story.append(p("www.slashmark.in | info@slashmark.in | +91 8500825294", "BodyCenter"))
+    story.append(
+        p(
+            "CIN: U62099TS2024OPC187033 | 2nd Floor, Ramnagar Road, Karim Nagar, Telangana, India, 505001",
+            "BodyCenter",
+        )
+    )
+    story.append(Spacer(1, 0.12 * inch))
+    story.append(p("Internship Report", "CoverText"))
+    story.append(Spacer(1, 0.06 * inch))
+    story.append(p("<b>Intern Overview</b>"))
+    story.append(p(f"<b>Name:</b> {STUDENT_NAME}"))
+    story.append(p(f"<b>Intern Email:</b> {INTERN_EMAIL}"))
+    story.append(p(f"<b>Role:</b> {INTERNSHIP_ROLE}"))
+    story.append(p(f"<b>Domain:</b> {DOMAIN}"))
+    story.append(p(f"<b>Intern ID:</b> {INTERN_ID}"))
+    story.append(p(f"<b>Batch:</b> {BATCH_DURATION}"))
+    story.append(Spacer(1, 0.12 * inch))
+
+    task_table = Table(
+        [
+            [cell("Task", True), cell("Status", True), cell("Marks", True), cell("Submission Time", True), cell("GitHub Repo", True)],
+            [cell("Task 1"), cell("Submitted"), cell("10"), cell("2026-04-18 10:02:43"), cell("View Repo")],
+            [cell("Task 2"), cell("Submitted"), cell("10"), cell("2026-04-18 10:30:28"), cell("View Repo")],
+            [cell("Task 3"), cell("Submitted"), cell("15"), cell("2026-04-18 18:21:30"), cell("View Repo")],
+            [cell("Task 4"), cell("Submitted"), cell("20"), cell("2026-04-18 11:15:59"), cell("View Repo")],
+            [cell("Task 5"), cell("Submitted"), cell("20"), cell("2026-04-18 17:41:34"), cell("View Repo")],
+            [cell("Task 6"), cell("Submitted"), cell("25"), cell("2026-04-18 17:57:24"), cell("View Repo")],
+        ],
+        colWidths=[1.1 * inch, 1.1 * inch, 0.7 * inch, 1.7 * inch, 1.1 * inch],
+    )
+    task_table.setStyle(cover_table_style(colors.HexColor("#1557d6")))
+    story.append(task_table)
+    story.append(Spacer(1, 0.14 * inch))
+
+    score_table = Table(
+        [
+            [cell("Module", True), cell("Score", True), cell("Result", True)],
+            [cell("General Aptitude & Communication"), cell("21 / 25"), cell("Pass")],
+            [cell("Logical Reasoning & Problem Solving"), cell("20 / 25"), cell("Pass")],
+            [cell("Technical & Analytical Fundamentals"), cell("23 / 25"), cell("Pass")],
+            [cell("Soft Skills & Leadership"), cell("24 / 25"), cell("Pass")],
+        ],
+        colWidths=[4.0 * inch, 0.9 * inch, 0.9 * inch],
+    )
+    score_table.setStyle(cover_table_style(colors.HexColor("#0ba447")))
+    story.append(score_table)
+    story.append(Spacer(1, 0.14 * inch))
+
+    metric_table = Table(
+        [
+            [cell("Metric", True), cell("Value", True)],
+            [cell("Projects Allocated"), cell("6")],
+            [cell("Not Completed"), cell("0")],
+            [cell("Tasks Completed"), cell("6 / 6")],
+            [cell("Quizzes Attempted"), cell("4 / 4")],
+            [cell("Quizzes Cleared"), cell("4 / 4")],
+        ],
+        colWidths=[4.2 * inch, 1.6 * inch],
+    )
+    metric_table.setStyle(cover_table_style(colors.HexColor("#ff7f1a")))
+    story.append(metric_table)
+    story.append(Spacer(1, 0.22 * inch))
+    story.append(p("<b>P. Abhishek</b>"))
+    story.append(p("Human Resources (HR)"))
+    story.append(p("Email: hr@slashmark.in"))
+    story.append(p("Phone: +91 85008 25294"))
     story.append(PageBreak())
     return story
 
@@ -188,10 +238,10 @@ def certificate_pages():
     return [
         p("CERTIFICATE", "ChapterTitle"),
         p(
-            f"This is to certify that {STUDENT_NAME} ({ROLL_NO}) has carried out the project "
-            f"entitled \"{PROJECT_TITLE}\" as part of the Research Project-II / internship work. "
+            f"This is to certify that {STUDENT_NAME} ({ROLL_NO}) has carried out the internship "
+            f"work entitled \"{PROJECT_TITLE}\" under the domain of {DOMAIN}. "
             "This technical report is a bonafide record of the work completed for the partial "
-            "fulfillment of the requirements of the eighth semester in Electrical Engineering.",
+            "fulfillment of the internship and academic requirements.",
         ),
         Spacer(1, 2.2 * inch),
         Table(
@@ -221,7 +271,7 @@ def certificate_pages():
         Spacer(1, 0.2 * inch),
         p("<b>Evaluation of Work:</b>"),
         p(
-            f"The student has worked on the project \"{PROJECT_TITLE}\". The project demonstrates "
+            f"The student has worked on the internship project \"{PROJECT_TITLE}\". The project demonstrates "
             "the use of Streamlit, FastAPI, Google Apps Script, Pinecone vector database, and a "
             "retrieval-augmented matching workflow for company requirements and candidate resumes. "
             "The work reflects independent learning, analytical ability, and practical application "
@@ -255,7 +305,7 @@ def prelim_pages():
         p("ACKNOWLEDGEMENT", "ChapterTitle"),
         p(
             f"I would like to express my sincere gratitude to the Department of {DEPARTMENT}, "
-            f"{INSTITUTE}, for providing me the opportunity to complete this Research Project-II. "
+            f"{INSTITUTE}, for providing me the opportunity to complete this internship report. "
             f"I am thankful to {COMPANY} for the project exposure and for helping me understand "
             "how software systems can support real-world hiring and recruitment workflows.",
         ),
@@ -522,8 +572,8 @@ def cell(text, bold=False):
         name="TableCellBold" if bold else "TableCell",
         parent=styles["BodyText"],
         fontName="Times-Bold" if bold else "Times-Roman",
-        fontSize=10,
-        leading=13,
+        fontSize=9.2,
+        leading=11.2,
         wordWrap="CJK",
     )
     return Paragraph(text, style)
@@ -542,6 +592,24 @@ def default_table_style():
             ("RIGHTPADDING", (0, 0), (-1, -1), 6),
             ("TOPPADDING", (0, 0), (-1, -1), 6),
             ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ]
+    )
+
+
+def cover_table_style(header_color):
+    return TableStyle(
+        [
+            ("BACKGROUND", (0, 0), (-1, 0), header_color),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONT", (0, 0), (-1, 0), "Times-Bold", 8),
+            ("FONT", (0, 1), (-1, -1), "Times-Roman", 7.8),
+            ("GRID", (0, 0), (-1, -1), 0.45, colors.grey),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 4),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+            ("TOPPADDING", (0, 0), (-1, -1), 2),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ("ALIGN", (2, 1), (2, -1), "CENTER"),
         ]
     )
 

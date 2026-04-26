@@ -28,8 +28,8 @@ STUDENT_NAME = "Akanksha Kumari"
 ROLL_NO = "2202113"
 DEPARTMENT = "Electrical Engineering"
 INSTITUTE = "National Institute of Technology Patna"
-COMPANY = "SLASH MARK IT SOLUTIONS (OPC) PVT LTD"
-INTERNSHIP_ROLE = "Machine Learning Engineer Intern"
+COMPANY = "Slashmark"
+INTERNSHIP_ROLE = "Machine Learning Engineer Intern at Slashmark"
 DOMAIN = "Machine Learning Internship"
 INTERN_EMAIL = "akankshainfinity1@gmail.com"
 INTERN_ID = "SM82389"
@@ -162,74 +162,27 @@ def add_page_number(canvas, doc):
 
 def cover_page():
     story = []
-    story.append(p("SLASH MARK IT SOLUTIONS (OPC) PVT LTD", "CoverText"))
-    story.append(p("www.slashmark.in | info@slashmark.in | +91 8500825294", "BodyCenter"))
-    story.append(
-        p(
-            "CIN: U62099TS2024OPC187033 | 2nd Floor, Ramnagar Road, Karim Nagar, Telangana, India, 505001",
-            "BodyCenter",
-        )
-    )
-    story.append(Spacer(1, 0.12 * inch))
-    story.append(p("Internship Report", "CoverText"))
-    story.append(Spacer(1, 0.06 * inch))
-    story.append(p("<b>Intern Overview</b>"))
-    story.append(p(f"<b>Name:</b> {STUDENT_NAME}"))
-    story.append(p(f"<b>Intern Email:</b> {INTERN_EMAIL}"))
-    story.append(p(f"<b>Role:</b> {INTERNSHIP_ROLE}"))
-    story.append(p(f"<b>Domain:</b> {DOMAIN}"))
-    story.append(p(f"<b>Intern ID:</b> {INTERN_ID}"))
-    story.append(p(f"<b>Batch:</b> {BATCH_DURATION}"))
-    story.append(Spacer(1, 0.12 * inch))
-
-    task_table = Table(
-        [
-            [cell("Task", True), cell("Status", True), cell("Marks", True), cell("Submission Time", True), cell("GitHub Repo", True)],
-            [cell("Task 1"), cell("Submitted"), cell("10"), cell("2026-04-18 10:02:43"), cell("View Repo")],
-            [cell("Task 2"), cell("Submitted"), cell("10"), cell("2026-04-18 10:30:28"), cell("View Repo")],
-            [cell("Task 3"), cell("Submitted"), cell("15"), cell("2026-04-18 18:21:30"), cell("View Repo")],
-            [cell("Task 4"), cell("Submitted"), cell("20"), cell("2026-04-18 11:15:59"), cell("View Repo")],
-            [cell("Task 5"), cell("Submitted"), cell("20"), cell("2026-04-18 17:41:34"), cell("View Repo")],
-            [cell("Task 6"), cell("Submitted"), cell("25"), cell("2026-04-18 17:57:24"), cell("View Repo")],
-        ],
-        colWidths=[1.1 * inch, 1.1 * inch, 0.7 * inch, 1.7 * inch, 1.1 * inch],
-    )
-    task_table.setStyle(cover_table_style(colors.HexColor("#1557d6")))
-    story.append(task_table)
-    story.append(Spacer(1, 0.14 * inch))
-
-    score_table = Table(
-        [
-            [cell("Module", True), cell("Score", True), cell("Result", True)],
-            [cell("General Aptitude & Communication"), cell("21 / 25"), cell("Pass")],
-            [cell("Logical Reasoning & Problem Solving"), cell("20 / 25"), cell("Pass")],
-            [cell("Technical & Analytical Fundamentals"), cell("23 / 25"), cell("Pass")],
-            [cell("Soft Skills & Leadership"), cell("24 / 25"), cell("Pass")],
-        ],
-        colWidths=[4.0 * inch, 0.9 * inch, 0.9 * inch],
-    )
-    score_table.setStyle(cover_table_style(colors.HexColor("#0ba447")))
-    story.append(score_table)
-    story.append(Spacer(1, 0.14 * inch))
-
-    metric_table = Table(
-        [
-            [cell("Metric", True), cell("Value", True)],
-            [cell("Projects Allocated"), cell("6")],
-            [cell("Not Completed"), cell("0")],
-            [cell("Tasks Completed"), cell("6 / 6")],
-            [cell("Quizzes Attempted"), cell("4 / 4")],
-            [cell("Quizzes Cleared"), cell("4 / 4")],
-        ],
-        colWidths=[4.2 * inch, 1.6 * inch],
-    )
-    metric_table.setStyle(cover_table_style(colors.HexColor("#ff7f1a")))
-    story.append(metric_table)
-    story.append(Spacer(1, 0.22 * inch))
-    story.append(p("<b>P. Abhishek</b>"))
-    story.append(p("Human Resources (HR)"))
-    story.append(p("Email: hr@slashmark.in"))
-    story.append(p("Phone: +91 85008 25294"))
+    story.append(Spacer(1, 0.45 * inch))
+    story.append(p("NATIONAL INSTITUTE OF TECHNOLOGY<br/>PATNA", "CoverTitle"))
+    if LOGO.exists():
+        story.append(Image(str(LOGO), width=1.45 * inch, height=1.45 * inch))
+    story.append(Spacer(1, 0.35 * inch))
+    story.append(p("RESEARCH PROJECT-II", "CoverText"))
+    story.append(Spacer(1, 0.20 * inch))
+    story.append(p(INTERNSHIP_ROLE, "CoverText"))
+    story.append(p(f"Batch: &nbsp; {BATCH_DURATION}", "BodyCenter"))
+    story.append(Spacer(1, 0.35 * inch))
+    story.append(p("Submitted by", "CoverText"))
+    story.append(p(f"Name: {STUDENT_NAME}", "CoverText"))
+    story.append(p(f"Roll No: {ROLL_NO}", "BodyCenter"))
+    story.append(Spacer(1, 0.20 * inch))
+    story.append(p(f"Department: {DEPARTMENT}", "CoverText"))
+    story.append(Spacer(1, 0.42 * inch))
+    story.append(p("Under the supervision of", "CoverText"))
+    story.append(p(SUPERVISOR, "BodyCenter"))
+    story.append(p(f"({COMPANY})", "BodyCenter"))
+    story.append(Spacer(1, 0.25 * inch))
+    story.append(p("SLASHMARK", "CoverText"))
     story.append(PageBreak())
     return story
 

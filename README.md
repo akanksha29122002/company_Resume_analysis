@@ -1,8 +1,8 @@
 # AI Resume Analyzer and Company Knowledge Bank
 
-AI Resume Analyzer is a Streamlit web app that reads resume PDFs, compares them with job descriptions, and generates ATS-style feedback. The upgraded version also works as a company resume bank and company knowledge base.
+AI Resume Analyzer is a Streamlit web app where companies upload requirement/company documents and candidates upload resumes. Both types of data are stored as active records for about 6 months. The system automatically compares active resumes with active company requirements and tells the company which candidates are ideal matches, including their potential and recommendation reason.
 
-HR can receive resumes through a Google Form, Apps Script can forward candidate data to the intake API, active resumes are maintained for 6 months, and recruiters can rank the best candidates for each new role. Pinecone can store both candidate resume vectors and company knowledge records such as establishment details, growth milestones, departments, projects, technologies, culture, and requirement history.
+HR can receive resumes through a Google Form, Apps Script can forward candidate data to the intake API, and Pinecone can store both candidate resume vectors and company document vectors such as establishment details, growth milestones, departments, projects, technologies, culture, and requirement history.
 
 ## Features
 
@@ -13,7 +13,9 @@ HR can receive resumes through a Google Form, Apps Script can forward candidate 
 - Compare resume keywords with job description
 - Generate ATS score, strengths, weaknesses, and suggestions
 - Store company candidate records for 6 months
+- Store company documents and requirements for 6 months
 - Rank active candidates for new company requirements
+- Show candidate potential: Ideal Match, Strong Potential, Moderate Potential, or Low Match
 - Store company establishment and growth records
 - Search company requirements and historical context
 - Include company knowledge while ranking candidates
@@ -54,10 +56,10 @@ streamlit run app.py
 ## Dashboard Modules
 
 - Single Resume: analyze one candidate resume against a job description.
-- Company Intake: add candidates manually or through HR upload.
-- Company Growth: store company establishment, milestones, projects, technologies, and requirements.
-- Role Matching: shortlist active candidates for a new company requirement.
-- Candidate Database: view and export active candidate records.
+- Candidate Upload: candidates or HR upload resumes.
+- Company Documents: companies upload requirement PDFs or paste company details.
+- Auto Match: automatically shortlist ideal candidates and show their potential.
+- Stored Data: view active candidate resumes and company documents.
 - Apps Script Setup: instructions for automatic Google Form intake.
 
 ## Pinecone Setup

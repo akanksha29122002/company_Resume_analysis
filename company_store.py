@@ -1,12 +1,13 @@
 import json
 import uuid
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
 DATA_DIR = Path("data")
 COMPANY_PATH = DATA_DIR / "company_knowledge.json"
+ACTIVE_DAYS = 183
 
 
 @dataclass
@@ -19,6 +20,8 @@ class CompanyRecord:
     details: str
     tags: str
     created_at: str
+    expires_at: str
+    status: str
 
 
 def utc_now() -> datetime:
@@ -29,7 +32,9 @@ def load_company_records() -> list[dict]:
     if not COMPANY_PATH.exists():
         return []
     with COMPANY_PATH.open("r", encoding="utf-8") as file:
-        return json.load(file)
+        records = json.load(file)
+    now = utc_now()
+    return [record for record in records if _parse_expiry(record) >= now]
 
 
 def save_company_records(records: list[dict]) -> None:
@@ -55,6 +60,8 @@ def add_company_record(
         details=details.strip(),
         tags=tags.strip(),
         created_at=utc_now().replace(microsecond=0).isoformat(),
+        expires_at=(utc_now() + timedelta(days=ACTIVE_DAYS)).replace(microsecond=0).isoformat(),
+        status="active",
     )
     records = load_company_records()
     records.append(asdict(record))
@@ -114,6 +121,26 @@ def sample_company_records() -> list[dict]:
             "details": item[4],
             "tags": item[5],
             "created_at": utc_now().replace(microsecond=0).isoformat(),
+            "expires_at": (utc_now() + timedelta(days=ACTIVE_DAYS)).replace(microsecond=0).isoformat(),
+            "status": "active",
         }
         for item in examples
     ]
+
+
+def purge_expired_company_records() -> int:
+    if not COMPANY_PATH.exists():
+        return 0
+    with COMPANY_PATH.open("r", encoding="utf-8") as file:
+        records = json.load(file)
+    now = utc_now()
+    active = [record for record in records if _parse_expiry(record) >= now]
+    save_company_records(active)
+    return len(records) - len(active)
+
+
+def _parse_expiry(record: dict) -> datetime:
+    value = record.get("expires_at")
+    if not value:
+        return utc_now() + timedelta(days=ACTIVE_DAYS)
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))

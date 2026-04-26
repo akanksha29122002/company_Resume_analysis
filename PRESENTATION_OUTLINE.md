@@ -2,7 +2,7 @@
 
 ## Slide 1: Title
 
-AI Resume Analyzer and Company Knowledge Bank
+Company Resume Analysis and Ideal Match Finder
 
 Presented by: Your Name
 
@@ -10,21 +10,24 @@ Presented by: Your Name
 
 - Resume screening is an important step in recruitment.
 - Many resumes fail due to missing keywords and poor structure.
-- Companies need a searchable active resume pool.
+- Companies upload requirement documents.
+- Candidates upload resumes.
+- Both remain active for 6 months.
 - Company history and growth should influence hiring decisions.
 
 ## Slide 3: Problem Statement
 
 - Students do not know how well their resume matches a job description.
 - Manual resume review is slow.
-- Companies need to find the best resume whenever a new requirement arrives.
+- Companies need automatic matching when requirements arrive.
 - Requirement matching should consider company establishment, growth, projects, and current direction.
 
 ## Slide 4: Objectives
 
-- Upload and analyze resume PDFs.
+- Companies upload requirement/company PDFs.
+- Candidates upload resume PDFs.
 - Receive resumes automatically from Google Forms.
-- Store active candidates for 6 months.
+- Store active candidates and company documents for 6 months.
 - Store company establishment-to-current growth details in Pinecone.
 - Rank candidates for new company roles.
 
@@ -32,9 +35,9 @@ Presented by: Your Name
 
 - Google Form sends resume data through Apps Script.
 - FastAPI intake stores candidate records.
-- Pinecone stores resume vectors.
-- Pinecone also stores company knowledge vectors.
-- Streamlit dashboard ranks active candidates.
+- Pinecone stores resume vectors and company document vectors.
+- Automation compares both active datasets.
+- Streamlit dashboard gives ideal match recommendations.
 
 ## Slide 6: Modules
 
@@ -43,6 +46,7 @@ Presented by: Your Name
 - Skill and section detection
 - Candidate database
 - Company growth knowledge base
+- Company document upload
 - Apps Script intake
 - Pinecone vector search
 
@@ -50,7 +54,8 @@ Presented by: Your Name
 
 - `candidate_resume` records store resume vectors and candidate metadata.
 - `company_knowledge` records store establishment, growth, project, technology, and requirement details.
-- Role matching can use both candidate data and company context.
+- Role matching uses candidate data and company documents.
+- Output shows Ideal Match, Strong Potential, Moderate Potential, or Low Match.
 
 ## Slide 8: Scoring Method
 
@@ -77,6 +82,7 @@ Presented by: Your Name
 - Candidate expiry date
 - Company requirement context
 - Best-fit role shortlist
+- Candidate potential and reason
 
 ## Slide 11: Deployment
 

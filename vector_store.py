@@ -40,11 +40,14 @@ def local_rank_candidates(role_description: str, limit: int = 10) -> list[dict]:
         vector_score = float(np.dot(role_vector, resume_vector))
         analysis = analyze_resume(candidate["resume_text"], role_description)
         final_score = round((analysis["ats_score"] * 0.75) + (max(vector_score, 0) * 100 * 0.25))
+        potential, recommendation = candidate_potential(final_score, analysis)
         update_candidate_score(candidate["candidate_id"], final_score, role_description[:80])
         ranked.append(
             {
                 **candidate,
                 "match_score": final_score,
+                "potential": potential,
+                "recommendation": recommendation,
                 "ats_score": analysis["ats_score"],
                 "semantic_match": analysis["semantic_match"],
                 "missing_skills": ", ".join(analysis["missing_skills"][:8]),
@@ -160,7 +163,7 @@ def search_pinecone(role_description: str, limit: int = 10) -> list[dict]:
         vector=embed_text(role_description),
         top_k=limit,
         include_metadata=True,
-        filter={"status": {"$eq": "active"}},
+        filter={"record_kind": {"$eq": "candidate_resume"}, "status": {"$eq": "active"}},
     )
     rows = []
     for match in results.get("matches", []):
@@ -176,11 +179,24 @@ def search_pinecone(role_description: str, limit: int = 10) -> list[dict]:
                 "match_score": round(float(match.get("score", 0)) * 100),
                 "ats_score": analysis["ats_score"],
                 "semantic_match": analysis["semantic_match"],
+                "potential": candidate_potential(round(float(match.get("score", 0)) * 100), analysis)[0],
+                "recommendation": candidate_potential(round(float(match.get("score", 0)) * 100), analysis)[1],
                 "missing_skills": ", ".join(analysis["missing_skills"][:8]),
                 "source": "pinecone",
             }
         )
     return rows
+
+
+def candidate_potential(match_score: int, analysis: dict) -> tuple[str, str]:
+    missing_count = len(analysis.get("missing_skills", []))
+    if match_score >= 80 and missing_count <= 3:
+        return "Ideal Match", "Send to company: high role fit, strong keywords, and low skill gap."
+    if match_score >= 65:
+        return "Strong Potential", "Good shortlist candidate: review missing skills and project depth."
+    if match_score >= 50:
+        return "Moderate Potential", "Possible backup candidate: needs improvement or training for this role."
+    return "Low Match", "Do not prioritize for this requirement unless the company wants a broad pool."
 
 
 def search_company_pinecone(query: str, limit: int = 5) -> list[dict]:
@@ -191,7 +207,7 @@ def search_company_pinecone(query: str, limit: int = 5) -> list[dict]:
         vector=embed_text(query),
         top_k=limit,
         include_metadata=True,
-        filter={"record_kind": {"$eq": "company_knowledge"}},
+        filter={"record_kind": {"$eq": "company_knowledge"}, "status": {"$eq": "active"}},
     )
     rows = []
     for match in results.get("matches", []):
@@ -249,4 +265,6 @@ def _company_metadata(record: dict) -> dict:
         "details": record.get("details", "")[:4000],
         "tags": record.get("tags", ""),
         "created_at": record.get("created_at", ""),
+        "expires_at": record.get("expires_at", ""),
+        "status": record.get("status", "active"),
     }

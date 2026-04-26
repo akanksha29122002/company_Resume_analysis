@@ -6,9 +6,9 @@ AI Resume Analyzer and Company Knowledge Bank
 
 ## Abstract
 
-The AI Resume Analyzer is a web application that evaluates candidate resumes against target job descriptions. The system extracts text from PDF resumes, cleans the extracted text, detects key resume sections, identifies skills, compares resume keywords with job requirements, and generates ATS-style scores with strengths, weaknesses, and improvement suggestions.
+The AI Resume Analyzer and Company Knowledge Bank is a web application where companies upload requirement or company documents and candidates upload resumes. Both company documents and candidate resumes are stored as active records for approximately 6 months. The system extracts text, stores vectors, compares active resumes with company requirements, and automatically reports which candidates are ideal matches for the company.
 
-The upgraded company version supports automatic resume intake using Google Apps Script, stores candidates for 6 months, syncs resume vectors to Pinecone, maintains a company knowledge base from establishment to current growth, and ranks the best active candidates whenever a new company requirement is entered.
+The upgraded company version supports automatic resume intake using Google Apps Script, stores candidates and company documents for 6 months, syncs both resume vectors and company-document vectors to Pinecone, maintains a company knowledge base from establishment to current growth, and ranks the best active candidates whenever a new company requirement is entered.
 
 ## Problem Statement
 
@@ -23,6 +23,7 @@ Students and job seekers often submit resumes without knowing whether their resu
 - Generate ATS score, strengths, weaknesses, and suggestions.
 - Receive resumes automatically through Google Form and Apps Script.
 - Store each candidate as active for 6 months.
+- Store company documents and requirements as active for 6 months.
 - Use Pinecone vector search to retrieve the best-fit resumes for new roles.
 - Store company establishment, growth, projects, technologies, and requirement history in Pinecone.
 - Use company context while shortlisting candidates.
@@ -54,14 +55,16 @@ Students and job seekers often submit resumes without knowing whether their resu
 10. Candidate resume vectors are synced to Pinecone when API keys are configured.
 11. Company growth and requirement records are stored in the Company Growth module.
 12. Pinecone searches company knowledge and can enrich the job requirement before candidate ranking.
-13. Recruiters paste a new role requirement and the system ranks active resumes by match score.
+13. Recruiters paste a new role requirement or use stored company documents.
+14. The system ranks active resumes by match score and labels candidate potential.
+15. The company receives a clear recommendation such as Ideal Match or Strong Potential.
 
 ## Pinecone Usage
 
 The system stores two types of vectors in Pinecone:
 
 - `candidate_resume`: candidate resume vectors with name, contact, role, upload date, expiry date, score, and active status.
-- `company_knowledge`: company establishment, growth, departments, projects, technology stack, culture, and requirement records.
+- `company_knowledge`: company establishment, growth, departments, projects, technology stack, culture, uploaded requirement documents, and active status.
 
 This allows the system to search both resumes and company knowledge. When a new requirement arrives, the app can combine the role description with company context and find candidates who match the actual direction of the company.
 
@@ -90,8 +93,10 @@ The system provides a dashboard where users can view:
 - Strengths and weaknesses
 - Active candidate database
 - Candidate expiry date after 6 months
+- Company document expiry date after 6 months
 - Searchable company timeline and requirement knowledge base
 - Best candidate shortlist for each role
+- Candidate potential and recommendation reason
 - CSV export of shortlisted candidates
 
 ## Advantages

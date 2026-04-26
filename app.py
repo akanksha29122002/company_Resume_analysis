@@ -2,7 +2,14 @@ import pandas as pd
 import streamlit as st
 
 from candidate_store import add_candidate, load_candidates, purge_expired
-from company_store import add_company_record, company_context_text, load_company_records, sample_company_records, save_company_records
+from company_store import (
+    add_company_record,
+    company_context_text,
+    load_company_records,
+    purge_expired_company_records,
+    sample_company_records,
+    save_company_records,
+)
 from resume_analyzer import analyze_resume, extract_pdf_text
 from vector_store import (
     local_company_context,
@@ -44,11 +51,12 @@ def extract_uploaded_text(uploaded_resume):
 
 
 st.title("AI Resume Analyzer and Company Resume Bank")
-st.caption("Analyze one resume, collect company applications, keep resumes active for 6 months, and rank best candidates for each role.")
+st.caption("Companies upload requirement documents, candidates upload resumes, both stay active for 6 months, and automation shortlists ideal matches with candidate potential.")
 
 purged = purge_expired()
-if purged:
-    st.toast(f"Removed {purged} expired candidate records.")
+purged_company = purge_expired_company_records()
+if purged or purged_company:
+    st.toast(f"Removed {purged} expired candidates and {purged_company} expired company records.")
 
 with st.sidebar:
     st.header("System Status")
@@ -58,7 +66,7 @@ with st.sidebar:
     st.caption("Set PINECONE_API_KEY and PINECONE_INDEX_NAME to enable vector search.")
 
 single_tab, intake_tab, company_tab, matching_tab, database_tab, setup_tab = st.tabs(
-    ["Single Resume", "Company Intake", "Company Growth", "Role Matching", "Candidate Database", "Apps Script Setup"]
+    ["Resume Check", "Candidate Upload", "Company Documents", "Auto Match", "Stored Data", "Apps Script Setup"]
 )
 
 with single_tab:
@@ -123,8 +131,8 @@ with single_tab:
         st.info("Upload one PDF resume to analyze it immediately.")
 
 with intake_tab:
-    st.subheader("Company Resume Intake")
-    st.caption("Use this for HR/admin upload, or connect the Apps Script webhook for automatic Google Form intake.")
+    st.subheader("Candidate Resume Upload")
+    st.caption("Candidates or HR can upload resumes here. Each resume remains active for 6 months and can be matched against company requirements.")
 
     with st.form("candidate_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
@@ -160,8 +168,8 @@ with intake_tab:
             st.error(f"Could not add candidate: {exc}")
 
 with company_tab:
-    st.subheader("Company Requirement and Growth Knowledge Base")
-    st.caption("Store company establishment details, milestones, projects, technologies, hiring patterns, and current requirements. Pinecone can search this context later while ranking candidates.")
+    st.subheader("Company Document Upload")
+    st.caption("Companies can upload requirement PDFs or paste establishment, growth, technology, project, culture, and hiring details. Each record remains active for 6 months.")
 
     with st.form("company_record_form", clear_on_submit=True):
         company_name = st.text_input("Company name", value="DemoTech Solutions")
@@ -172,21 +180,28 @@ with company_tab:
         )
         date_or_period = col2.text_input("Date or period", placeholder="Example: 2019, Q1 2025, Current")
         title = st.text_input("Title", placeholder="Example: AI practice launched")
+        company_doc = st.file_uploader("Company document PDF", type=["pdf"], key="company_doc_pdf")
         details = st.text_area(
-            "Full details",
+            "Full details or extra notes",
             height=160,
-            placeholder="Write company establishment story, growth, products, clients, hiring needs, tech stack, expansion, achievements, or requirements.",
+            placeholder="Write company establishment story, growth, products, clients, hiring needs, tech stack, expansion, achievements, or requirements. If a PDF is uploaded, its text will be stored with these notes.",
         )
         tags = st.text_input("Tags", placeholder="python, ai, sales-growth, healthcare, cloud")
         add_company = st.form_submit_button("Save Company Record")
 
     if add_company:
-        if not details.strip():
-            st.error("Please add details before saving.")
+        try:
+            document_text = extract_uploaded_text(company_doc)
+        except Exception as exc:
+            document_text = ""
+            st.warning(f"Could not extract company PDF text: {exc}")
+        full_details = "\n\n".join([part for part in [document_text, details.strip()] if part])
+        if not full_details.strip():
+            st.error("Please upload a company PDF or add company details before saving.")
         else:
-            record = add_company_record(company_name, record_type, title, date_or_period, details, tags)
+            record = add_company_record(company_name, record_type, title, date_or_period, full_details, tags)
             synced = upsert_company_records_to_pinecone([record])
-            st.success(f"Company record saved. Pinecone synced: {'yes' if synced else 'no'}.")
+            st.success(f"Company document saved for 6 months. Pinecone synced: {'yes' if synced else 'no'}.")
 
     col1, col2, col3 = st.columns(3)
     if col1.button("Load Sample Company History"):
@@ -223,7 +238,8 @@ with company_tab:
         st.info("Add company records manually or load sample company history.")
 
 with matching_tab:
-    st.subheader("Find Best Candidates for a New Role")
+    st.subheader("Automatic Ideal Match Finder")
+    st.caption("Paste a requirement or rely on stored company documents. The app finds the best active resumes and tells the company who is ideal and what their potential is.")
     role_description = st.text_area(
         "Paste new company requirement",
         value=SAMPLE_JOB,
@@ -234,7 +250,7 @@ with matching_tab:
     use_pinecone = st.toggle("Use Pinecone search when available", value=True)
     include_company_context = st.toggle("Include company growth and requirement context", value=True)
 
-    if st.button("Rank Candidates"):
+    if st.button("Find Ideal Matches"):
         effective_role_description = role_description
         if include_company_context:
             context = company_context_text()
@@ -251,6 +267,8 @@ with matching_tab:
             df = pd.DataFrame(rows)
             visible = [
                 "match_score",
+                "potential",
+                "recommendation",
                 "ats_score",
                 "semantic_match",
                 "name",
@@ -262,6 +280,14 @@ with matching_tab:
                 "expires_at",
             ]
             st.dataframe(df[[col for col in visible if col in df.columns]], use_container_width=True)
+            ideal = df[df["potential"].isin(["Ideal Match", "Strong Potential"])] if "potential" in df.columns else pd.DataFrame()
+            if not ideal.empty:
+                top = ideal.iloc[0]
+                st.success(
+                    f"Best candidate to send to company: {top.get('name', 'Candidate')} "
+                    f"({top.get('potential', 'Potential')}, score {top.get('match_score', 0)}/100). "
+                    f"{top.get('recommendation', '')}"
+                )
             st.download_button(
                 "Download shortlist CSV",
                 df.to_csv(index=False).encode("utf-8"),
@@ -272,7 +298,8 @@ with matching_tab:
             st.info("No active candidates found. Add resumes through Company Intake or Apps Script first.")
 
 with database_tab:
-    st.subheader("Candidate Database")
+    st.subheader("Stored Active Data")
+    st.caption("Candidate resumes and company documents are kept active for approximately 6 months.")
     candidates = load_candidates()
     if st.button("Sync Active Candidates to Pinecone"):
         count = upsert_candidates_to_pinecone(candidates)
@@ -304,6 +331,13 @@ with database_tab:
         )
     else:
         st.info("No active candidate records yet.")
+
+    company_records = load_company_records()
+    st.markdown("**Active Company Documents and Requirements**")
+    if company_records:
+        st.dataframe(pd.DataFrame(company_records), use_container_width=True)
+    else:
+        st.info("No active company documents yet.")
 
 with setup_tab:
     st.subheader("Automatic Resume Intake With Google Apps Script")

@@ -59,7 +59,7 @@ streamlit run app.py
 
 - Pinecone is optional. Without `PINECONE_API_KEY`, the dashboard uses local vector ranking.
 - Pinecone stores two kinds of records in the same index: `candidate_resume` and `company_knowledge`.
-- Candidate records are active for 183 days, approximately 6 months. Expired records are purged automatically when the app runs.
+- Candidate resumes and company documents are active for 183 days, approximately 6 months. Expired records are purged automatically when the app runs.
 - Apps Script sends Google Form submissions to the `/ingest` endpoint and writes the generated candidate ID, ATS score, active-until date, and Pinecone sync status back to the Sheet.
 - Company establishment, growth, department, technology, and requirement records can be added from the Company Growth tab and synced to Pinecone.
 
@@ -94,7 +94,7 @@ Candidate resumes are stored with:
 - latest score and active status
 - resume preview metadata
 
-Company knowledge is stored with:
+Company documents and knowledge records are stored with:
 
 - `record_kind`: `company_knowledge`
 - company name
@@ -103,5 +103,6 @@ Company knowledge is stored with:
 - date or period
 - detailed description
 - tags
+- expiry date and active status
 
-This allows recruiters to search not only candidates, but also the company's past and present requirements before shortlisting.
+This allows recruiters to search not only candidates, but also company documents and present requirements before shortlisting. The Auto Match tab combines both active datasets and returns candidate potential labels for the company.

@@ -1,0 +1,18 @@
+Python Developer Intern
+
+We are looking for a candidate with Python, SQL, data analysis, Streamlit, machine learning basics, Git, communication skills, and project experience.
+
+Responsibilities:
+- Build small dashboards and automation tools.
+- Clean and analyze structured data.
+- Explain technical results clearly.
+- Work with REST APIs and GitHub.
+
+Required skills:
+- Python
+- SQL
+- Pandas or NumPy
+- Streamlit
+- Machine learning basics
+- Git
+- Communication

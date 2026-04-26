@@ -1,0 +1,93 @@
+# PPT Outline: AI Resume Analyzer and Company Knowledge Bank
+
+## Slide 1: Title
+
+AI Resume Analyzer and Company Knowledge Bank
+
+Presented by: Your Name
+
+## Slide 2: Introduction
+
+- Resume screening is an important step in recruitment.
+- Many resumes fail due to missing keywords and poor structure.
+- Companies need a searchable active resume pool.
+- Company history and growth should influence hiring decisions.
+
+## Slide 3: Problem Statement
+
+- Students do not know how well their resume matches a job description.
+- Manual resume review is slow.
+- Companies need to find the best resume whenever a new requirement arrives.
+- Requirement matching should consider company establishment, growth, projects, and current direction.
+
+## Slide 4: Objectives
+
+- Upload and analyze resume PDFs.
+- Receive resumes automatically from Google Forms.
+- Store active candidates for 6 months.
+- Store company establishment-to-current growth details in Pinecone.
+- Rank candidates for new company roles.
+
+## Slide 5: System Architecture
+
+- Google Form sends resume data through Apps Script.
+- FastAPI intake stores candidate records.
+- Pinecone stores resume vectors.
+- Pinecone also stores company knowledge vectors.
+- Streamlit dashboard ranks active candidates.
+
+## Slide 6: Modules
+
+- PDF text extraction
+- Text cleaning
+- Skill and section detection
+- Candidate database
+- Company growth knowledge base
+- Apps Script intake
+- Pinecone vector search
+
+## Slide 7: Pinecone Design
+
+- `candidate_resume` records store resume vectors and candidate metadata.
+- `company_knowledge` records store establishment, growth, project, technology, and requirement details.
+- Role matching can use both candidate data and company context.
+
+## Slide 8: Scoring Method
+
+- Skill match: 30 percent
+- Semantic similarity: 25 percent
+- Section completeness: 20 percent
+- Keyword overlap: 15 percent
+- Contact and length quality: 10 percent
+
+## Slide 9: User Interface
+
+- Single resume analyzer
+- Company candidate intake
+- Company growth timeline
+- Active candidate database
+- Role matching dashboard
+- CSV shortlist export
+
+## Slide 10: Results
+
+- ATS score out of 100
+- Strengths and weaknesses
+- Missing job skills
+- Candidate expiry date
+- Company requirement context
+- Best-fit role shortlist
+
+## Slide 11: Deployment
+
+- Dashboard deploys on Streamlit Cloud.
+- Webhook API deploys on Render.
+- Apps Script connects Google Form to API.
+- Pinecone is optional with local fallback.
+
+## Slide 12: Conclusion
+
+- The project helps students and companies.
+- It automates intake, scoring, and retrieval.
+- It uses company growth history for better hiring decisions.
+- It is deployable and presentation-ready.

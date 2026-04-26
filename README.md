@@ -1,5 +1,15 @@
 # AI Resume Analyzer and Company Knowledge Bank
 
+## Live App
+
+Streamlit app link:
+
+https://company-resume-analysis.streamlit.app
+
+GitHub repository:
+
+https://github.com/akanksha29122002/company_Resume_analysis
+
 AI Resume Analyzer is a Streamlit web app where companies upload requirement/company documents and candidates upload resumes. Both types of data are stored as active records for about 6 months. The system automatically compares active resumes with active company requirements and tells the company which candidates are ideal matches, including their potential and recommendation reason.
 
 HR can receive resumes through a Google Form, Apps Script can forward candidate data to the intake API, and Pinecone can store both candidate resume vectors and company document vectors such as establishment details, growth milestones, departments, projects, technologies, culture, and requirement history.

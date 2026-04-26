@@ -317,8 +317,15 @@ def lists_and_toc():
         ["Chapter 8: Apps Script Automation", "22"],
         ["Chapter 9: Implementation", "24"],
         ["Chapter 10: Results and Testing", "26"],
-        ["Chapter 11: Conclusion and Future Scope", "28"],
-        ["References", "30"],
+        ["Chapter 11: User Interface Description", "28"],
+        ["Chapter 12: API and Automation Design", "30"],
+        ["Chapter 13: Deployment and User Guide", "32"],
+        ["Chapter 14: Security and Data Lifecycle", "34"],
+        ["Chapter 15: Conclusion and Future Scope", "36"],
+        ["Appendix A: Module Description", "38"],
+        ["Appendix B: Sample Workflow", "40"],
+        ["Appendix C: API Endpoints", "42"],
+        ["References", "44"],
     ]
     table = Table(toc, colWidths=[4.4 * inch, 0.8 * inch])
     table.setStyle(
@@ -337,11 +344,15 @@ def lists_and_toc():
         p("Fig. 7.1: RAG workflow using Pinecone vector database"),
         p("Fig. 8.1: Google Apps Script automation flow"),
         p("Fig. 10.1: Candidate match and potential result table"),
+        p("Fig. 11.1: Deployment workflow"),
+        p("Fig. 12.1: Six-month data lifecycle"),
         PageBreak(),
         p("LIST OF TABLES", "ChapterTitle"),
         p("Table 4.1: Technology stack used in the project"),
         p("Table 6.1: Pinecone metadata design"),
         p("Table 10.1: Candidate potential categories"),
+        p("Table 11.1: Deployment configuration"),
+        p("Table 12.1: Security and privacy controls"),
         PageBreak(),
         p("TABLE OF CONTENTS", "ChapterTitle"),
         table,
@@ -405,6 +416,43 @@ def project_chapters():
     )
     potential_table.setStyle(default_table_style())
 
+    deployment_table = Table(
+        [
+            [cell("Component", True), cell("Deployment Target", True), cell("Purpose", True)],
+            [cell("Streamlit App"), cell("Streamlit Community Cloud"), cell("Recruiter and candidate dashboard")],
+            [cell("FastAPI Backend"), cell("Render"), cell("Webhook endpoints for Apps Script automation")],
+            [cell("Pinecone Index"), cell("Pinecone Cloud"), cell("Vector search for resumes and company documents")],
+            [cell("Google Apps Script"), cell("Google Workspace"), cell("Automatic calculation from Forms and Sheets")],
+        ],
+        colWidths=[1.6 * inch, 1.7 * inch, 2.4 * inch],
+    )
+    deployment_table.setStyle(default_table_style())
+
+    security_table = Table(
+        [
+            [cell("Control", True), cell("Description", True)],
+            [cell("Active Status"), cell("Only records marked active are considered during matching.")],
+            [cell("Expiry Date"), cell("Candidate and company records expire after about 183 days.")],
+            [cell("API Token"), cell("Apps Script requests use an intake token for basic endpoint protection.")],
+            [cell("Metadata Filters"), cell("Pinecone queries separate candidate_resume and company_knowledge records.")],
+            [cell("Local Fallback"), cell("The project can work locally even when Pinecone keys are unavailable.")],
+        ],
+        colWidths=[1.8 * inch, 3.9 * inch],
+    )
+    security_table.setStyle(default_table_style())
+
+    api_table = Table(
+        [
+            [cell("Endpoint", True), cell("Method", True), cell("Purpose", True)],
+            [cell("/health"), cell("GET"), cell("Checks whether the backend service is active.")],
+            [cell("/ingest"), cell("POST"), cell("Receives candidate resume data and returns ATS score.")],
+            [cell("/company-ingest"), cell("POST"), cell("Receives company requirement documents and stores vectors.")],
+            [cell("/rag-match"), cell("POST"), cell("Retrieves context and returns best candidate recommendation.")],
+        ],
+        colWidths=[1.4 * inch, 0.9 * inch, 3.4 * inch],
+    )
+    api_table.setStyle(default_table_style())
+
     return (
         chapter(
             "CHAPTER 1: INTRODUCTION",
@@ -412,6 +460,8 @@ def project_chapters():
                 "Recruitment has become increasingly data-driven as companies receive a large number of resumes for every open role. Manual shortlisting is slow and may miss good candidates because recruiters must compare resumes with changing requirements, company growth direction, department needs, and technical expectations.",
                 "The proposed project provides a platform where companies can upload their requirement documents and candidates can upload their resumes. The system stores both types of documents for approximately six months and automatically compares active resumes with active company requirements.",
                 "The application is designed as a practical hiring support tool. It does not only calculate an ATS-style score; it also identifies candidate potential and provides a recommendation that helps the company decide whether a candidate should be shortlisted.",
+                "The project also demonstrates the role of Machine Learning Engineering in building intelligent data-driven applications. Although the project uses lightweight deterministic embeddings for deployment simplicity, the architecture is designed so that transformer-based embeddings can be integrated later without changing the overall workflow.",
+                "The system is useful for companies such as Slashmark because internship or hiring programs often collect many applications. A searchable vector database allows the company to revisit applications whenever a suitable requirement appears within the active data period.",
                 ["Company documents and candidate resumes are stored in one portal.", "Pinecone is used as the vector database.", "A RAG-style workflow retrieves company context before matching candidates.", "Google Apps Script supports automatic calculation through Google Forms and Sheets."],
             ],
         )
@@ -423,6 +473,8 @@ def project_chapters():
                 "Vector databases have recently become important in information retrieval systems. A vector database stores numerical representations of text and allows semantic search. Pinecone is one such managed vector database that can store and retrieve similar documents efficiently.",
                 "Retrieval-Augmented Generation (RAG) systems combine retrieval with reasoning. In this project, the system first retrieves relevant company requirement records, then uses this context to rank candidate resumes. This makes the matching process more company-aware.",
                 "Automation tools such as Google Apps Script can connect Google Forms and Google Sheets with external APIs. This helps create a low-cost automated recruitment workflow where form submissions can trigger scoring and matching without manual coding by the user.",
+                "Several modern applicant tracking systems also use ranking logic based on skills, experience, education, and keywords. However, many of them do not include the company's historical documents and growth context. This project attempts to bridge that gap by storing company documents as searchable knowledge records.",
+                "The project is inspired by concepts from information retrieval, natural language processing, and machine learning operations. It shows how separate modules such as data intake, preprocessing, vector storage, API services, and dashboard visualization can work together as a complete product.",
             ],
         )
         + chapter(
@@ -431,6 +483,8 @@ def project_chapters():
                 "Companies often collect resumes through forms, email, and job portals. However, these resumes are not always organized in a way that can be searched when a new requirement arrives.",
                 "Another problem is that company requirements change over time. A company may establish new teams, expand into new technologies, or start new projects. Candidate matching should consider these company documents instead of looking only at a single job description.",
                 "The main problem addressed in this project is to build a system that stores company documents and candidate resumes, keeps them active for six months, and automatically recommends ideal candidates whenever a company requirement is available.",
+                "The system should also be explainable. A company should not only see a candidate name, but should also understand why the candidate is recommended, what potential category the candidate belongs to, and which missing skills should be reviewed before selection.",
+                "Therefore, the project combines automated resume analysis, company document storage, Pinecone-based retrieval, RAG-style matching, and Apps Script automation into one workflow.",
             ],
         )
         + chapter(
@@ -439,6 +493,8 @@ def project_chapters():
                 "The project uses a combination of frontend, backend, document processing, vector search, and automation technologies. Streamlit provides the web interface, FastAPI exposes endpoints for automation, Pinecone stores vectors, and Google Apps Script connects Google Forms and Sheets.",
                 tech_table,
                 "This combination makes the project suitable for a final-year submission because it demonstrates practical software engineering, cloud deployment, automation, and applied NLP concepts.",
+                "Streamlit was selected because it makes it possible to build a functional dashboard quickly using Python. FastAPI was selected because it provides a clean way to expose automation endpoints for Google Apps Script. Pinecone was selected because it is designed for scalable vector search and metadata filtering.",
+                "The project has been kept modular. If a future version uses sentence-transformers or OpenAI embeddings, the embedding function can be replaced while keeping the dashboard, API endpoints, and storage format almost unchanged.",
             ],
         )
         + chapter(
@@ -448,6 +504,8 @@ def project_chapters():
                 BoxDiagram(["Company|Docs", "Candidate|Resumes", "Text|Extraction", "Pinecone|Vectors", "RAG Match|Result"]),
                 "Fig. 5.1: System architecture of company resume analysis portal",
                 "The dashboard contains tabs for resume checking, candidate upload, company document upload, automatic matching, stored data, and Apps Script setup. This gives both companies and administrators a clear workflow.",
+                "The candidate upload module accepts PDF resumes or pasted resume text. The company document module accepts requirement PDFs or pasted requirement details. The automatic matching module combines both sources and produces a shortlist.",
+                "The design also includes a local fallback. If Pinecone credentials are not configured, the application uses deterministic local vectors and JSON storage. This makes the project easy to demonstrate in offline or limited-access environments.",
             ],
         )
         + chapter(
@@ -457,6 +515,8 @@ def project_chapters():
                 "Pinecone stores two kinds of vectors. Candidate resume vectors are tagged as candidate_resume. Company document vectors are tagged as company_knowledge. Metadata is stored with each vector to support filtering and retrieval.",
                 pinecone_table,
                 "The use of metadata allows the app to search only active candidate resumes when ranking candidates and search only company knowledge when retrieving company context.",
+                "Each candidate record contains fields such as candidate ID, name, email, phone, role applied, resume text, upload date, expiry date, latest score, and status. Each company record contains company name, record type, title, date or period, details, tags, expiry date, and status.",
+                "The six-month active period is important because companies may not want to keep old candidate profiles indefinitely. At the same time, six months is long enough for companies to reuse candidate data when new requirements arrive.",
             ],
         )
         + chapter(
@@ -466,6 +526,8 @@ def project_chapters():
                 BoxDiagram(["New|Requirement", "Retrieve|Company Context", "Augment|Requirement", "Search|Resumes", "Explain|Recommendation"]),
                 "Fig. 7.1: RAG workflow using Pinecone vector database",
                 "After retrieval, the requirement is augmented with company context. Candidate resumes are then searched and scored. The final output includes a ranked list of candidates, a match score, potential label, and recommendation reason.",
+                "The RAG flow in this project is retrieval-focused and explainable. Instead of generating long free-form text, the system generates a concise recommendation based on retrieved company context and candidate analysis. This makes the output easier for recruiters to trust and verify.",
+                "The retrieved company context may include current hiring needs, technical stack, previous project descriptions, or company growth direction. This context improves the matching decision because a candidate may fit not only the immediate requirement but also the long-term direction of the company.",
             ],
         )
         + chapter(
@@ -476,6 +538,8 @@ def project_chapters():
                 BoxDiagram(["Google|Form", "Apps|Script", "FastAPI|Endpoint", "Pinecone|Storage", "Sheet|Result"]),
                 "Fig. 8.1: Google Apps Script automation flow",
                 ["Candidate forms calculate ATS score automatically.", "Company forms store requirement documents automatically.", "Google Sheets can trigger RAG matching.", "Results are written back to the sheet for company review."],
+                "The Apps Script menu gives non-technical users a simple way to trigger matching. A recruiter can paste a requirement in Google Sheets, click the custom menu, and receive the best candidate details directly in the sheet.",
+                "This automation is useful because many internship and recruitment programs already use Google Forms. The project adds intelligence to that existing workflow without forcing the company to change its data collection method.",
             ],
         )
         + chapter(
@@ -485,6 +549,9 @@ def project_chapters():
                 "The vector database and RAG matching functions are implemented in vector_store.py. The FastAPI backend is implemented in api.py. The Google Apps Script automation code is stored in apps_script/Code.gs.",
                 "The app extracts text from PDF files using pypdf. It detects sections such as Education, Experience, Projects, Skills, Certifications, and Contact. It also detects technical skills such as Python, SQL, Streamlit, machine learning, Git, and communication.",
                 "The matching score combines ATS-style analysis with vector similarity. Candidate potential is labeled as Ideal Match, Strong Potential, Moderate Potential, or Low Match.",
+                "The implementation follows a clean modular structure. The resume analyzer is responsible for text analysis, the candidate store handles active resume records, the company store handles active company documents, and the vector store handles Pinecone operations and RAG matching.",
+                "The FastAPI backend exposes three major endpoints: /ingest for candidate resumes, /company-ingest for company documents, and /rag-match for automatic ideal-match calculation.",
+                "The Streamlit UI provides a direct manual workflow, while Apps Script provides the automated workflow. This means the same backend logic can serve both dashboard users and Google Sheets users.",
             ],
         )
         + chapter(
@@ -495,14 +562,98 @@ def project_chapters():
                 "Fig. 10.1: Candidate match and potential result table",
                 "The application also passed Python syntax checks and local Streamlit execution checks. The project has been pushed to GitHub and configured for Streamlit Cloud and Render deployment.",
                 "The output generated by the system is understandable for recruiters because it provides not only a score but also a reason for the recommendation.",
+                "Testing was performed for PDF generation, Python syntax, report generation, candidate ranking, local RAG matching, and Streamlit server startup. The local matching test confirmed that a candidate can be classified into a potential category and that the recommendation text is generated correctly.",
+                "A key result of the project is that it can work in two modes. In production mode, Pinecone is used as the vector database. In demonstration mode, local vector ranking is used so the project remains functional without external API keys.",
             ],
         )
         + chapter(
-            "CHAPTER 11: CONCLUSION AND FUTURE SCOPE",
+            "CHAPTER 11: USER INTERFACE DESCRIPTION",
+            [
+                "The user interface is built using Streamlit and is divided into multiple tabs so that different users can perform different tasks without confusion. The Resume Check tab is used for individual resume analysis. It accepts a PDF resume and a job description, then displays ATS score, semantic match, keyword match, detected sections, strengths, weaknesses, and suggestions.",
+                "The Candidate Upload tab is designed for candidate intake. A candidate or HR user can enter candidate name, email, phone number, role applied, and upload a resume PDF. The system extracts the resume text and stores the candidate as an active record for six months.",
+                "The Company Documents tab is used by a company to upload requirement documents or paste company details. These details can include technical needs, hiring requirements, growth plans, company establishment details, department needs, or project descriptions.",
+                "The Auto Match tab is the main recommendation interface. It accepts a new company requirement and retrieves relevant company context. It then ranks active candidates and displays match score, potential label, recommendation, missing skills, and candidate contact details.",
+                "The Stored Data tab shows active candidate records and active company documents. This helps recruiters verify what data is currently available for matching. The Apps Script Setup tab explains how to connect Google Forms and Google Sheets with the FastAPI backend.",
+                ["The UI is simple enough for non-technical users.", "Each tab maps to a real recruitment workflow.", "The dashboard can run locally or on Streamlit Cloud.", "Shortlists can be exported as CSV for company use."],
+            ],
+        )
+        + chapter(
+            "CHAPTER 12: API AND AUTOMATION DESIGN",
+            [
+                "The FastAPI backend provides automation endpoints so that the project can work beyond the Streamlit dashboard. This is important because companies often collect resumes and requirements through forms. The API allows Google Apps Script to send form data directly to the project backend.",
+                api_table,
+                "The /ingest endpoint accepts candidate information, resume text, or resume PDF in base64 format. It extracts text, analyzes the resume, stores the candidate record, syncs the vector to Pinecone, and returns candidate ID, ATS score, expiry date, and sync status.",
+                "The /company-ingest endpoint accepts company document information. It can receive company details as text or a company requirement PDF in base64 format. It stores the company record, syncs it to Pinecone, and returns record ID and active-until date.",
+                "The /rag-match endpoint accepts a requirement and returns a RAG-style recommendation. It retrieves relevant company context, augments the requirement, ranks candidates, and returns the best candidate, potential label, match score, recommendation text, and retrieved evidence.",
+                "This API design separates the user interface from automation. The same core logic can be used by Streamlit, Google Sheets, or future mobile/web clients.",
+            ],
+        )
+        + chapter(
+            "CHAPTER 13: DEPLOYMENT AND USER GUIDE",
+            [
+                "The project is deployment-ready using GitHub, Streamlit Community Cloud, Render, and Pinecone. The Streamlit dashboard can be deployed as the main user-facing application, while the FastAPI backend can be deployed separately for Apps Script automation.",
+                deployment_table,
+                BoxDiagram(["GitHub|Repository", "Streamlit|Dashboard", "Render|API", "Pinecone|Vectors", "Google Sheets|Automation"]),
+                "Fig. 11.1: Deployment workflow",
+                "To use the system, a company first uploads requirement documents or pastes requirement details. Candidates then upload resumes. The recruiter can open the Auto Match tab, enter a requirement, and view ranked candidates. If Apps Script is configured, the same process can be triggered directly from Google Sheets.",
+                "The GitHub repository contains the application code, deployment files, documentation, Apps Script code, and the generated report. This makes the project easy to share, review, and redeploy.",
+                "For Streamlit Cloud deployment, the repository, branch, and main file path are selected. In this project, the main file path is app.py. For Render deployment, the render.yaml file defines two services: one for the Streamlit dashboard and one for the FastAPI backend.",
+                "The user should configure Pinecone environment variables in the deployment platform. These include PINECONE_API_KEY, PINECONE_INDEX_NAME, PINECONE_CLOUD, and PINECONE_REGION. The INTAKE_TOKEN variable is used by Apps Script to call protected API endpoints.",
+            ],
+        )
+        + chapter(
+            "CHAPTER 14: SECURITY AND DATA LIFECYCLE",
+            [
+                "Because the system handles resumes and company documents, data lifecycle and basic security controls are important. This project implements an active period of approximately six months for both candidate and company records.",
+                security_table,
+                BoxDiagram(["Upload|Record", "Store|Vector", "Active|183 Days", "Match|Only Active", "Purge|Expired"]),
+                "Fig. 12.1: Six-month data lifecycle",
+                "The API uses an intake token to protect automated endpoints. Pinecone metadata filters ensure that candidate resumes and company knowledge records are queried separately. This prevents company documents from appearing as candidates and keeps the retrieval process controlled.",
+                "A production-ready version should add authentication, role-based access, encrypted storage, audit logs, and explicit consent from candidates before storing resumes.",
+                "The six-month active period is implemented through expiry dates. When the app runs, expired candidate and company records are removed from local active storage. Pinecone metadata also includes active status and expiry date so that retrieval can focus on valid records.",
+                "The project avoids storing secret keys in the repository. Streamlit secrets or deployment environment variables should be used for Pinecone keys and intake tokens. This is important because API keys in public repositories can be misused.",
+            ],
+        )
+        + chapter(
+            "CHAPTER 15: CONCLUSION AND FUTURE SCOPE",
             [
                 "The project successfully implements a company resume analysis and ideal match finder system. It allows companies to upload requirements and candidates to upload resumes. Both data types are stored for six months and can be searched using Pinecone.",
                 "The RAG workflow improves matching because the system considers company context before ranking candidates. Apps Script automation makes the system useful for form-based real-world workflows.",
                 "Future improvements can include transformer-based embeddings, email notifications, PDF report export, interview scheduling, admin login, analytics dashboards, and integration with job portals.",
+                "The current project demonstrates a strong foundation for an intelligent recruitment system. With improved embeddings and authentication, it can be expanded into a production-grade company hiring assistant.",
+            ],
+        )
+        + chapter(
+            "APPENDIX A: MODULE DESCRIPTION",
+            [
+                "app.py: This file contains the Streamlit dashboard. It provides tabs for resume checking, candidate upload, company document upload, automatic matching, stored data, and Apps Script setup.",
+                "resume_analyzer.py: This file contains the logic for extracting resume text, detecting sections, identifying skills, calculating keyword overlap, and generating ATS-style feedback.",
+                "candidate_store.py: This file manages candidate records, including candidate ID, contact details, resume text, upload date, expiry date, latest score, and active status.",
+                "company_store.py: This file manages company records such as establishment details, growth history, department requirements, project descriptions, and uploaded requirement documents.",
+                "vector_store.py: This file contains the vector embedding function, Pinecone upsert functions, local fallback ranking, company context retrieval, and RAG match report generation.",
+                "api.py: This file contains FastAPI endpoints for candidate ingestion, company document ingestion, and RAG matching. These endpoints are used by Apps Script automation.",
+                "apps_script/Code.gs: This file contains Google Apps Script code for sending Google Form submissions to the API and writing automatic calculations back to Google Sheets.",
+            ],
+        )
+        + chapter(
+            "APPENDIX B: SAMPLE WORKFLOW",
+            [
+                "Step 1: A company uploads a requirement document mentioning that it needs a Python, SQL, and Streamlit developer for a dashboard project.",
+                "Step 2: Candidate resumes are uploaded through the dashboard or Google Form. Each candidate record is stored with an expiry date six months from the upload date.",
+                "Step 3: The system converts both company documents and resumes into vector representations and stores them in Pinecone with metadata.",
+                "Step 4: When the recruiter enters a requirement, the system retrieves relevant company records from Pinecone and augments the requirement with this context.",
+                "Step 5: Active candidate resumes are retrieved and scored. The system generates a ranked table with match score, ATS score, semantic match, missing skills, potential label, and recommendation.",
+                "Step 6: The recruiter downloads the shortlist CSV or uses the Google Sheets automation result to contact suitable candidates.",
+            ],
+        )
+        + chapter(
+            "APPENDIX C: API ENDPOINTS",
+            [
+                "GET /health: This endpoint returns a simple status response and is used to verify that the backend is running.",
+                "POST /ingest: This endpoint receives candidate information. It supports resume text and base64 PDF input. It returns candidate ID, ATS score, expiry date, and Pinecone sync status.",
+                "POST /company-ingest: This endpoint receives company requirement or knowledge records. It supports text details and base64 PDF input. It returns company record ID, expiry date, and Pinecone sync status.",
+                "POST /rag-match: This endpoint performs the RAG matching workflow. It retrieves company context, ranks candidate resumes, and returns the best candidate with potential label and recommendation.",
+                "These endpoints make the project extensible because future clients can call the same backend without rewriting the core matching logic.",
             ],
         )
     )

@@ -39,6 +39,7 @@ Students and job seekers often submit resumes without knowing whether their resu
 - Tokenization and cosine similarity
 - Google Apps Script
 - Pinecone vector database
+- RAG-style retrieval and recommendation flow
 - Local JSON storage for demo candidate and company records
 
 ## Methodology
@@ -54,10 +55,11 @@ Students and job seekers often submit resumes without knowing whether their resu
 9. For company intake, candidate records are stored with upload date and expiry date.
 10. Candidate resume vectors are synced to Pinecone when API keys are configured.
 11. Company growth and requirement records are stored in the Company Growth module.
-12. Pinecone searches company knowledge and can enrich the job requirement before candidate ranking.
+12. Pinecone searches company knowledge and enriches the job requirement before candidate ranking.
 13. Recruiters paste a new role requirement or use stored company documents.
 14. The system ranks active resumes by match score and labels candidate potential.
 15. The company receives a clear recommendation such as Ideal Match or Strong Potential.
+16. Apps Script can call the RAG endpoint and write automatic calculations back to Google Sheets.
 
 ## Pinecone Usage
 
@@ -66,7 +68,7 @@ The system stores two types of vectors in Pinecone:
 - `candidate_resume`: candidate resume vectors with name, contact, role, upload date, expiry date, score, and active status.
 - `company_knowledge`: company establishment, growth, departments, projects, technology stack, culture, uploaded requirement documents, and active status.
 
-This allows the system to search both resumes and company knowledge. When a new requirement arrives, the app can combine the role description with company context and find candidates who match the actual direction of the company.
+This allows the system to search both resumes and company knowledge. When a new requirement arrives, the app retrieves relevant company context, augments the role description, retrieves matching candidate resumes, and generates an explainable recommendation. This retrieval-augmented flow is the RAG system used in the project.
 
 ## Scoring Logic
 

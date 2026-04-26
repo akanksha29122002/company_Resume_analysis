@@ -15,6 +15,7 @@ from vector_store import (
     local_company_context,
     local_rank_candidates,
     pinecone_enabled,
+    rag_match_report,
     search_company_pinecone,
     search_pinecone,
     upsert_candidates_to_pinecone,
@@ -251,17 +252,22 @@ with matching_tab:
     include_company_context = st.toggle("Include company growth and requirement context", value=True)
 
     if st.button("Find Ideal Matches"):
-        effective_role_description = role_description
         if include_company_context:
-            context = company_context_text()
-            if context:
-                effective_role_description = f"{role_description}\n\nCompany context:\n{context}"
-
-        rows = []
-        if use_pinecone and pinecone_enabled():
-            rows = search_pinecone(effective_role_description, limit=limit)
-        if not rows:
-            rows = local_rank_candidates(effective_role_description, limit=limit)
+            report = rag_match_report(role_description, limit=limit, use_pinecone=use_pinecone)
+            rows = report["ranked_candidates"]
+            st.success(report["answer"])
+            with st.expander("Retrieved company context used for matching"):
+                context_df = pd.DataFrame(report["retrieved_company_context"])
+                if context_df.empty:
+                    st.caption("No company context retrieved.")
+                else:
+                    st.dataframe(context_df, use_container_width=True)
+        else:
+            rows = []
+            if use_pinecone and pinecone_enabled():
+                rows = search_pinecone(role_description, limit=limit)
+            if not rows:
+                rows = local_rank_candidates(role_description, limit=limit)
 
         if rows:
             df = pd.DataFrame(rows)
@@ -340,9 +346,11 @@ with database_tab:
         st.info("No active company documents yet.")
 
 with setup_tab:
-    st.subheader("Automatic Resume Intake With Google Apps Script")
-    st.write("Create a Google Form with fields named exactly: Name, Email, Phone, Role Applied, Resume Upload, Resume Text.")
-    st.write("Attach the Apps Script in `apps_script/Code.gs` to the linked Google Sheet and create an installable `On form submit` trigger.")
+    st.subheader("Apps Script Automation")
+    st.write("Use one Candidate Google Form and one Company Google Form. Apps Script sends both to the FastAPI backend, stores vectors in Pinecone, and can calculate ideal matches from Google Sheets.")
+    st.write("Candidate form fields: Name, Email, Phone, Role Applied, Resume Upload, Resume Text, Job Description.")
+    st.write("Company form fields: Company Name, Record Type, Title, Date or Period, Details, Tags, Company Document Upload.")
+    st.write("Attach `apps_script/Code.gs` to the linked Google Sheet. Add installable triggers for `onCandidateFormSubmit` and `onCompanyFormSubmit` depending on the sheet/form.")
     st.code(
         """Required deployment variables:
 
@@ -353,7 +361,12 @@ PINECONE_REGION=us-east-1
 INTAKE_TOKEN=choose_a_secret_token
 
 Webhook endpoint for Apps Script:
-https://YOUR-RENDER-APP.onrender.com/ingest""",
+https://YOUR-RENDER-APP.onrender.com
+
+API endpoints:
+/ingest
+/company-ingest
+/rag-match""",
         language="text",
     )
-    st.write("Use the Company Growth tab to store establishment history, company expansion, departments, projects, tech stack, culture, and requirement changes. These records can be synced to Pinecone and used as context during candidate ranking.")
+    st.write("The Google Sheet menu `Resume RAG -> Calculate ideal matches` calls the RAG endpoint and writes the best candidate, potential, score, and recommendation back to the sheet.")

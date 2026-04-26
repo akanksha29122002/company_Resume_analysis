@@ -20,6 +20,8 @@ HR can receive resumes through a Google Form, Apps Script can forward candidate 
 - Search company requirements and historical context
 - Include company knowledge while ranking candidates
 - Optional Pinecone vector database integration
+- RAG-style retrieval from company documents and candidate resumes
+- FastAPI endpoints for resume intake, company document intake, and ideal-match calculation
 - Google Apps Script template for automatic form-based resume intake
 - Runs with local fallback when Pinecone is not configured
 
@@ -60,7 +62,7 @@ streamlit run app.py
 - Company Documents: companies upload requirement PDFs or paste company details.
 - Auto Match: automatically shortlist ideal candidates and show their potential.
 - Stored Data: view active candidate resumes and company documents.
-- Apps Script Setup: instructions for automatic Google Form intake.
+- Apps Script Setup: instructions for automatic Google Form intake and automatic RAG match calculation.
 
 ## Pinecone Setup
 
@@ -88,16 +90,17 @@ The Company Growth tab stores records such as:
 - Past and current requirements
 - Culture and working style
 
-These records can be synced to Pinecone with metadata type `company_knowledge`. During role matching, the app can combine the new requirement with company context so shortlisted candidates fit both the role and the company's direction.
+These records can be synced to Pinecone with metadata type `company_knowledge`. During role matching, the app retrieves relevant company context, augments the requirement, retrieves matching resumes, and generates an explainable recommendation. This is the project RAG flow.
 
 ## Google Apps Script Intake
 
-1. Create a Google Form with fields: `Name`, `Email`, `Phone`, `Role Applied`, `Resume Upload`, and optionally `Resume Text`.
-2. Link the form to a Google Sheet.
+1. Create a Candidate Google Form with fields: `Name`, `Email`, `Phone`, `Role Applied`, `Resume Upload`, `Resume Text`, and `Job Description`.
+2. Create a Company Google Form with fields: `Company Name`, `Record Type`, `Title`, `Date or Period`, `Details`, `Tags`, and `Company Document Upload`.
 3. Open Extensions -> Apps Script.
 4. Paste the code from `apps_script/Code.gs`.
-5. Replace `INTAKE_API_URL` and `INTAKE_TOKEN`.
-6. Add an installable trigger for `onFormSubmit`.
+5. Replace `API_BASE_URL` and `INTAKE_TOKEN`.
+6. Add installable triggers for `onCandidateFormSubmit` and `onCompanyFormSubmit`.
+7. Use the Google Sheet menu `Resume RAG -> Calculate ideal matches` for automatic match calculation.
 
 ## Deployment
 

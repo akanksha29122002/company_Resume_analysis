@@ -42,7 +42,7 @@ For manual dashboard deployment, use:
 streamlit run app.py --server.port $PORT --server.address 0.0.0.0
 ```
 
-For the intake webhook API, use:
+For the intake and RAG webhook API, use:
 
 ```bash
 uvicorn api:app --host 0.0.0.0 --port $PORT
@@ -73,9 +73,9 @@ PINECONE_REGION=us-east-1
 INTAKE_TOKEN=choose_a_secret_token
 ```
 
-## Google Form Fields
+## Google Form Fields and Apps Script Automation
 
-Use these exact field names so `apps_script/Code.gs` can read responses:
+Candidate form fields:
 
 - Name
 - Email
@@ -83,6 +83,37 @@ Use these exact field names so `apps_script/Code.gs` can read responses:
 - Role Applied
 - Resume Upload
 - Resume Text
+- Job Description
+
+Company form fields:
+
+- Company Name
+- Record Type
+- Title
+- Date or Period
+- Details
+- Tags
+- Company Document Upload
+
+Apps Script functions:
+
+- `onCandidateFormSubmit`: sends candidate resume data to `/ingest` and writes ATS score.
+- `onCompanyFormSubmit`: sends company document data to `/company-ingest` and stores company vectors.
+- `calculateIdealMatches`: calls `/rag-match` and writes best candidate, potential, score, and recommendation to Google Sheets.
+
+API base URL in Apps Script:
+
+```text
+https://YOUR-RENDER-APP.onrender.com
+```
+
+Backend endpoints:
+
+```text
+/ingest
+/company-ingest
+/rag-match
+```
 
 ## Pinecone Record Design
 
@@ -105,4 +136,13 @@ Company documents and knowledge records are stored with:
 - tags
 - expiry date and active status
 
-This allows recruiters to search not only candidates, but also company documents and present requirements before shortlisting. The Auto Match tab combines both active datasets and returns candidate potential labels for the company.
+This allows recruiters to search not only candidates, but also company documents and present requirements before shortlisting. The Auto Match tab and `/rag-match` endpoint combine both active datasets and return candidate potential labels for the company.
+
+## RAG System Flow
+
+1. Company documents and candidate resumes are converted into vectors.
+2. Vectors are stored in Pinecone with metadata.
+3. When a requirement arrives, the app retrieves relevant company records from Pinecone.
+4. The requirement is augmented with retrieved company context.
+5. Active candidate resumes are retrieved and scored.
+6. The app generates an explainable recommendation for the company.

@@ -57,6 +57,39 @@ def local_rank_candidates(role_description: str, limit: int = 10) -> list[dict]:
     return sorted(ranked, key=lambda item: item["match_score"], reverse=True)[:limit]
 
 
+def rag_match_report(requirement: str, limit: int = 10, use_pinecone: bool = True) -> dict:
+    """Retrieve company context + resumes, then generate an explainable match report."""
+    company_context = []
+    if use_pinecone and pinecone_enabled():
+        company_context = search_company_pinecone(requirement, limit=5)
+    if not company_context:
+        company_context = local_company_context(requirement, limit=5)
+
+    context_text = "\n".join(
+        f"{item.get('record_type', '')}: {item.get('title', '')} - {item.get('details', '')}"
+        for item in company_context
+    )
+    augmented_requirement = requirement
+    if context_text:
+        augmented_requirement = f"{requirement}\n\nRetrieved company context:\n{context_text}"
+
+    candidates = []
+    if use_pinecone and pinecone_enabled():
+        candidates = search_pinecone(augmented_requirement, limit=limit)
+    if not candidates:
+        candidates = local_rank_candidates(augmented_requirement, limit=limit)
+
+    best = candidates[0] if candidates else {}
+    answer = _rag_answer(requirement, company_context, candidates)
+    return {
+        "requirement": requirement,
+        "retrieved_company_context": company_context,
+        "ranked_candidates": candidates,
+        "best_candidate": best,
+        "answer": answer,
+    }
+
+
 def local_company_context(query: str, limit: int = 5) -> list[dict]:
     query_vector = np.array(embed_text(query), dtype=np.float32)
     rows = []
@@ -197,6 +230,21 @@ def candidate_potential(match_score: int, analysis: dict) -> tuple[str, str]:
     if match_score >= 50:
         return "Moderate Potential", "Possible backup candidate: needs improvement or training for this role."
     return "Low Match", "Do not prioritize for this requirement unless the company wants a broad pool."
+
+
+def _rag_answer(requirement: str, company_context: list[dict], candidates: list[dict]) -> str:
+    if not candidates:
+        return "No active candidate resume matched this requirement. Add candidate resumes or broaden the requirement."
+
+    best = candidates[0]
+    context_titles = [item.get("title", "") for item in company_context[:3] if item.get("title")]
+    context_note = ", ".join(context_titles) if context_titles else "stored company documents"
+    return (
+        f"Recommended candidate: {best.get('name', 'Candidate')} is a "
+        f"{best.get('potential', 'Potential Match')} with score {best.get('match_score', 0)}/100. "
+        f"Reason: {best.get('recommendation', '')} The ranking used the new requirement plus retrieved context from "
+        f"{context_note}. Missing skills to review: {best.get('missing_skills', 'None detected')}."
+    )
 
 
 def search_company_pinecone(query: str, limit: int = 5) -> list[dict]:

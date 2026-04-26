@@ -54,10 +54,25 @@ Presented by: Your Name
 
 - `candidate_resume` records store resume vectors and candidate metadata.
 - `company_knowledge` records store establishment, growth, project, technology, and requirement details.
-- Role matching uses candidate data and company documents.
+- Role matching uses candidate data and retrieved company documents.
 - Output shows Ideal Match, Strong Potential, Moderate Potential, or Low Match.
 
-## Slide 8: Scoring Method
+## Slide 8: RAG Flow
+
+- Store company documents and resumes as vectors in Pinecone.
+- Retrieve relevant company context for a new requirement.
+- Augment the requirement with retrieved context.
+- Retrieve and rank active candidate resumes.
+- Generate an explainable recommendation for the company.
+
+## Slide 9: Apps Script Automation
+
+- Candidate form automatically sends resumes to the API.
+- Company form automatically sends requirements to the API.
+- Google Sheets menu calls `/rag-match`.
+- Sheet receives best candidate, potential, score, and recommendation.
+
+## Slide 10: Scoring Method
 
 - Skill match: 30 percent
 - Semantic similarity: 25 percent
@@ -65,7 +80,7 @@ Presented by: Your Name
 - Keyword overlap: 15 percent
 - Contact and length quality: 10 percent
 
-## Slide 9: User Interface
+## Slide 11: User Interface
 
 - Single resume analyzer
 - Company candidate intake
@@ -74,7 +89,7 @@ Presented by: Your Name
 - Role matching dashboard
 - CSV shortlist export
 
-## Slide 10: Results
+## Slide 12: Results
 
 - ATS score out of 100
 - Strengths and weaknesses
@@ -84,14 +99,14 @@ Presented by: Your Name
 - Best-fit role shortlist
 - Candidate potential and reason
 
-## Slide 11: Deployment
+## Slide 13: Deployment
 
 - Dashboard deploys on Streamlit Cloud.
 - Webhook API deploys on Render.
 - Apps Script connects Google Form to API.
 - Pinecone is optional with local fallback.
 
-## Slide 12: Conclusion
+## Slide 14: Conclusion
 
 - The project helps students and companies.
 - It automates intake, scoring, and retrieval.

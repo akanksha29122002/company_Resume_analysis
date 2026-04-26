@@ -362,13 +362,13 @@ def chapter(title, paragraphs):
 def project_chapters():
     tech_table = Table(
         [
-            ["Technology", "Purpose"],
-            ["Python", "Core programming language for backend logic and NLP processing"],
-            ["Streamlit", "Interactive web dashboard for companies and candidates"],
-            ["FastAPI", "API backend for automated intake and RAG matching"],
-            ["Pinecone", "Vector database for storing and searching resume/company vectors"],
-            ["Google Apps Script", "Automation layer for Google Forms and Sheets"],
-            ["pypdf", "Text extraction from uploaded PDF documents"],
+            [cell("Technology", True), cell("Purpose", True)],
+            [cell("Python"), cell("Core programming language for backend logic and NLP processing")],
+            [cell("Streamlit"), cell("Interactive web dashboard for companies and candidates")],
+            [cell("FastAPI"), cell("API backend for automated intake and RAG matching")],
+            [cell("Pinecone"), cell("Vector database for storing and searching resume/company vectors")],
+            [cell("Google Apps Script"), cell("Automation layer for Google Forms and Sheets")],
+            [cell("pypdf"), cell("Text extraction from uploaded PDF documents")],
         ],
         colWidths=[1.6 * inch, 4.0 * inch],
     )
@@ -376,9 +376,15 @@ def project_chapters():
 
     pinecone_table = Table(
         [
-            ["Record Type", "Stored Metadata"],
-            ["candidate_resume", "Name, email, phone, role, upload date, expiry date, active status, resume preview"],
-            ["company_knowledge", "Company name, document type, title, details, tags, expiry date, active status"],
+            [cell("Record Type", True), cell("Stored Metadata", True)],
+            [
+                cell("candidate_resume"),
+                cell("Name, email, phone, role, upload date, expiry date, active status, and resume preview"),
+            ],
+            [
+                cell("company_knowledge"),
+                cell("Company name, document type, title, details, tags, expiry date, and active status"),
+            ],
         ],
         colWidths=[1.7 * inch, 3.9 * inch],
     )
@@ -386,11 +392,11 @@ def project_chapters():
 
     potential_table = Table(
         [
-            ["Score Range", "Potential Label", "Action"],
-            ["80-100", "Ideal Match", "Send to company as high priority"],
-            ["65-79", "Strong Potential", "Shortlist and review missing skills"],
-            ["50-64", "Moderate Potential", "Keep as backup or training candidate"],
-            ["Below 50", "Low Match", "Do not prioritize for current requirement"],
+            [cell("Score Range", True), cell("Potential Label", True), cell("Action", True)],
+            [cell("80-100"), cell("Ideal Match"), cell("Send to company as high priority")],
+            [cell("65-79"), cell("Strong Potential"), cell("Shortlist and review missing skills")],
+            [cell("50-64"), cell("Moderate Potential"), cell("Keep as backup or training candidate")],
+            [cell("Below 50"), cell("Low Match"), cell("Do not prioritize for current requirement")],
         ],
         colWidths=[1.2 * inch, 1.5 * inch, 2.9 * inch],
     )
@@ -509,6 +515,18 @@ def references():
         p("5. Python pypdf Documentation, https://pypdf.readthedocs.io/"),
         p("6. Project Repository: https://github.com/akanksha29122002/company_Resume_analysis"),
     ]
+
+
+def cell(text, bold=False):
+    style = ParagraphStyle(
+        name="TableCellBold" if bold else "TableCell",
+        parent=styles["BodyText"],
+        fontName="Times-Bold" if bold else "Times-Roman",
+        fontSize=10,
+        leading=13,
+        wordWrap="CJK",
+    )
+    return Paragraph(text, style)
 
 
 def default_table_style():
